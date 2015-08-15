@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">MyRuns</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="profile_picture">Profile Picture</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="profile_pciture">
+        <item>Take with Camera</item>
+        <item>Choose from Gallery</item>
+    </string-array>
+
+    <string name="title_activity_main">MainActivity</string>
+    <string name="user_profile">User Profile</string>
+    <string name="profile_summary">Names, Email, Class, etc</string>
+    <string name="privacy_setting">Privacy setting</string>
+    <string name="records_anonymous">Posting your records anonymously</string>
+    <string name="additional_settings">Additional settings</string>
+    <string name="unit_preference">Unit Preference</string>
+    <string name="unit_distance_value">Select the units in which you would like to see your distance values</string>
+    <string name="comment">Comment</string>
+    <string name="comment_suggestion">Any suggestion to this course?</string>
+    <string name="homepage">My Homepage</string>
+    <string name="portfolio">http://andela-asolomon.github.io/ayoolasolomon</string>
+    <string name="input_type">Input Type:</string>
+    <string name="start">Start</string>
+
+    <string-array name="activity_type">
+        <item>Running</item>
+        <item>Walking</item>
+        <item>Standing</item>
+        <item>Cycling</item>
+        <item>Hiking</item>
+        <item>Downhill Skiing</item>
+        <item>Cross Country Skiing</item>
+        <item>Skating</item>
+        <item>Swimming</item>
+        <item>Mountain Biking</item>
+        <item>Wheelchair</item>
+        <item>Elliptical</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="input_type">
+        <item>Manual</item>
+        <item>GPS</item>
+        <item>Automatic</item>
+    </string-array>
+
+    <string name="title_activity_manual_input">ManualInputActivity</string>
+    <string name="title_activity_map_display">MapDisplayActivity</string>
+
+    <string-array name="manual_entry">
+        <item>Date</item>
+        <item>Time</item>
+        <item>Duration</item>
+        <item>Distance</item>
+        <item>Calories</item>
+        <item>Heart Rate</item>
+        <item>Comment</item>
+    </string-array>
+</resources>
+
+
