@@ -11,16 +11,37 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
+
+  public static interface OnCompleteListener {
+    void onComplete(String time);
+  }
+
+  private OnCompleteListener mListener;
+
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      this.mListener = (OnCompleteListener)activity;
+    }
+    catch (final ClassCastException e) {
+      throw new ClassCastException(activity.toString() + " must implement OnCompleteListener");
+    }
+  }
+
 
   public static MyRunsDialog newInstance(String value) {
     MyRunsDialog fragment = new MyRunsDialog();
@@ -29,7 +50,6 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
     fragment.setArguments(args);
     return fragment;
   }
-
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -70,6 +90,10 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
   @Override
   public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
     Log.d("Data", "Date: " + year + monthOfYear + dayOfMonth);
+
+    String date = Integer.toString(year) + "/" + Integer.toString(monthOfYear) + "/" + Integer.toString(dayOfMonth);
+
+    mListener.onComplete(date);
   }
 
   private Dialog timePicker() {
@@ -82,7 +106,8 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
 
   @Override
   public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-    Log.d("Time", "Time " + hourOfDay + minute);
+    String time = Integer.toString(hourOfDay) + ":" + Integer.toString(minute);
+    mListener.onComplete(time);
   }
 
   private Dialog durationPicker(String dialogType, boolean inputType) {
@@ -107,7 +132,7 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
           public void onClick(DialogInterface dialog, int which) {
             String value = editText.getText().toString();
 
-            Toast.makeText(getActivity(), "Value " + value, Toast.LENGTH_SHORT).show();
+            mListener.onComplete(value);
           }
         })
         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

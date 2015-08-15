@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ManualInputActivity extends AppCompatActivity {
+public class ManualInputActivity extends AppCompatActivity implements MyRunsDialog.OnCompleteListener {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -65,5 +65,10 @@ public class ManualInputActivity extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager();
     MyRunsDialog runsDialog = MyRunsDialog.newInstance(value);
     runsDialog.show(fragmentManager, "dialog");
+  }
+
+  @Override
+  public void onComplete(String time) {
+    Toast.makeText(this, "Value: " + time, Toast.LENGTH_SHORT).show();
   }
 }
