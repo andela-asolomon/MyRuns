@@ -19,7 +19,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ManualInputActivity extends AppCompatActivity implements MyRunsDialog.OnCompleteListener {
+public class ManualInputActivity extends AppCompatActivity {
+
+  ExerciseEntry mEntry;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class ManualInputActivity extends AppCompatActivity implements MyRunsDial
   private void setUpUI() {
 
     String activityType = getIntent().getStringExtra("activity");
+    Log.d("Lol", "nice: " + activityType);
+//    mEntry.setmActivityType(Integer.parseInt(activityType));
     ListView listView = (ListView) findViewById(R.id.manual_entry);
 
     String[] manualEntry = getResources().getStringArray(R.array.manual_entry);
@@ -44,7 +48,6 @@ public class ManualInputActivity extends AppCompatActivity implements MyRunsDial
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String value = parent.getItemAtPosition(position).toString();
         myRunsDialog(value);
-
       }
     });
   }
@@ -67,8 +70,34 @@ public class ManualInputActivity extends AppCompatActivity implements MyRunsDial
     runsDialog.show(fragmentManager, "dialog");
   }
 
-  @Override
-  public void onComplete(String time) {
-    Toast.makeText(this, "Value: " + time, Toast.LENGTH_SHORT).show();
+  public void onDateSet(int year, int month, int day) {
+    String date = Integer.toString(year) + "/" + Integer.toString(month) + "/" + Integer.toString(day);
+    Log.d("Date: ", date);
   }
+
+  public void onTimeSet(int hour, int minute) {
+    String time = Integer.toString(hour) + ":" + Integer.toString(minute);
+    Log.d("Time", time);
+  }
+
+  public void onDuration(String value) {
+    Log.d("Duration", value);
+  }
+
+  public void onDistance(String value) {
+    Log.d("Distance", value);
+  }
+
+  public void onCalories(String value) {
+    Log.d("Calories", value);
+  }
+
+  public void onHeartRate(String value) {
+    Log.d("Heart Rate", value);
+  }
+
+  public void onComment(String comment) {
+    Log.d("Comment", comment);
+  }
+
 }

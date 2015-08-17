@@ -26,22 +26,7 @@ import java.util.Calendar;
 public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
 
-  public static interface OnCompleteListener {
-    void onComplete(String time);
-  }
-
-  private OnCompleteListener mListener;
-
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    try {
-      this.mListener = (OnCompleteListener)activity;
-    }
-    catch (final ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement OnCompleteListener");
-    }
-  }
-
+  ExerciseEntry mExerciseEntry;
 
   public static MyRunsDialog newInstance(String value) {
     MyRunsDialog fragment = new MyRunsDialog();
@@ -62,15 +47,15 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
       case "Time":
         return timePicker();
       case "Duration":
-        return durationPicker(dialogType + " (minutes):", true);
+        return durationPicker(dialogType + " (minutes):");
       case "Distance":
-        return durationPicker(dialogType + " (Miles):", true);
+        return distancePicker(dialogType + " (Miles):");
       case "Calories":
-        return durationPicker(dialogType + ":", true);
+        return caloriesPicker(dialogType + ":");
       case "Heart Rate":
-        return durationPicker("Average Heart Rate (BPM):", true);
+        return heartRatePicker("Average Heart Rate (BPM):");
       case "Comment":
-        return durationPicker(dialogType + ":", false);
+        return commentPicker(dialogType + ":");
       default:
         return null;
     }
@@ -89,11 +74,7 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
 
   @Override
   public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-    Log.d("Data", "Date: " + year + monthOfYear + dayOfMonth);
-
-    String date = Integer.toString(year) + "/" + Integer.toString(monthOfYear) + "/" + Integer.toString(dayOfMonth);
-
-    mListener.onComplete(date);
+    ((ManualInputActivity)getActivity()).onDateSet(year, monthOfYear, dayOfMonth);
   }
 
   private Dialog timePicker() {
@@ -106,22 +87,14 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
 
   @Override
   public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-    String time = Integer.toString(hourOfDay) + ":" + Integer.toString(minute);
-    mListener.onComplete(time);
+    ((ManualInputActivity)getActivity()).onTimeSet(hourOfDay, minute);
   }
 
-  private Dialog durationPicker(String dialogType, boolean inputType) {
+  private Dialog durationPicker(final String dialogType) {
 
     final EditText editText = new EditText(getActivity());
     editText.setId(R.id.distance_dialog);
-
-    if (inputType) {
-      editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-    } else {
-      editText.setInputType(InputType.TYPE_CLASS_TEXT);
-      editText.setLines(3);
-      editText.setHint("How did it go? Enter Notes here");
-    }
+    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     builder
@@ -131,8 +104,117 @@ public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnD
           @Override
           public void onClick(DialogInterface dialog, int which) {
             String value = editText.getText().toString();
+            ((ManualInputActivity)getActivity()).onDuration(value);
+          }
+        })
+        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
 
-            mListener.onComplete(value);
+    return builder.create();
+  }
+
+  private Dialog distancePicker(final String dialogType) {
+
+    final EditText editText = new EditText(getActivity());
+    editText.setId(R.id.distance_dialog);
+    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder
+        .setMessage(dialogType)
+        .setView(editText)
+        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            String value = editText.getText().toString();
+            ((ManualInputActivity)getActivity()).onDistance(value);
+          }
+        })
+        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
+
+    return builder.create();
+  }
+
+  private Dialog caloriesPicker(final String dialogType) {
+
+    final EditText editText = new EditText(getActivity());
+    editText.setId(R.id.distance_dialog);
+    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder
+        .setMessage(dialogType)
+        .setView(editText)
+        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            String value = editText.getText().toString();
+            ((ManualInputActivity)getActivity()).onCalories(value);
+          }
+        })
+        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
+
+    return builder.create();
+  }
+
+  private Dialog heartRatePicker(final String dialogType) {
+
+    final EditText editText = new EditText(getActivity());
+    editText.setId(R.id.distance_dialog);
+    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder
+        .setMessage(dialogType)
+        .setView(editText)
+        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            String value = editText.getText().toString();
+            ((ManualInputActivity)getActivity()).onHeartRate(value);
+          }
+        })
+        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
+
+    return builder.create();
+  }
+
+  private Dialog commentPicker(final String dialogType) {
+
+    final EditText editText = new EditText(getActivity());
+    editText.setId(R.id.distance_dialog);
+    editText.setInputType(InputType.TYPE_CLASS_TEXT);
+    editText.setLines(3);
+    editText.setHint("How did it go? Enter Notes here");
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder
+        .setMessage(dialogType)
+        .setView(editText)
+        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            String value = editText.getText().toString();
+            ((ManualInputActivity)getActivity()).onComment(value);
           }
         })
         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
