@@ -86,22 +86,22 @@ public class ExercisesDataSource {
   }
 
 
-  public List<ExerciseEntry> fetchEntries() {
+  public Cursor fetchEntries() {
     List<ExerciseEntry> entriesList = new ArrayList<ExerciseEntry>();
 
     String selectQuery = "SELECT * FROM " + MySQLiteHelper.TABLE_EXERCISES;
     Cursor cursor = database.rawQuery(selectQuery, null);
 
-    if (cursor.moveToFirst()) {
-      do {
-        ExerciseEntry entry = new ExerciseEntry();
-        entry.setId(Long.parseLong(cursor.getString(0)));
+//    if (cursor.moveToFirst()) {
+//      do {
+//        ExerciseEntry entry = new ExerciseEntry();
+//        entry.setId(Long.parseLong(cursor.getString(0)));
+//
+//        entriesList.add(entry);
+//      } while (cursor.moveToNext());
+//    }
 
-        entriesList.add(entry);
-      } while (cursor.moveToNext());
-    }
-
-    return entriesList;
+    return cursor;
   }
 
 
