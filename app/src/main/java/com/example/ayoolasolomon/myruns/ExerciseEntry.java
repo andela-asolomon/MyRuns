@@ -2,6 +2,7 @@ package com.example.ayoolasolomon.myruns;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -13,12 +14,12 @@ public class ExerciseEntry {
   private Long id;
   private int mInputType;        // Manual, GPS or automatic
   private int mActivityType;     // Running, cycling etc.
-  private Calendar mDateTime;    // When does this entry happen
+  private Date mDateTime;    // When does this entry happen
   private int mDuration;         // Exercise duration in seconds
   private double mDistance;      // Distance traveled. Either in meters or feet.
   private double mAvgPace;       // Average pace
   private double mAvgSpeed;      // Average speed
-  private int mCalorie;          // Calories burnt
+  private int mCalories;          // Calories burnt
   private double mClimb;         // Climb. Either in meters or feet.
   private int mHeartRate;        // Heart rate
   private String mComment;       // Comments
@@ -48,11 +49,11 @@ public class ExerciseEntry {
     this.mActivityType = mActivityType;
   }
 
-  public Calendar getmDateTime() {
+  public Date getmDateTime() {
     return mDateTime;
   }
 
-  public void setmDateTime(Calendar mDateTime) {
+  public void setmDateTime(Date mDateTime) {
     this.mDateTime = mDateTime;
   }
 
@@ -88,12 +89,12 @@ public class ExerciseEntry {
     this.mAvgSpeed = mAvgSpeed;
   }
 
-  public int getmCalorie() {
-    return mCalorie;
+  public int getmCalories() {
+    return mCalories;
   }
 
-  public void setmCalorie(int mCalorie) {
-    this.mCalorie = mCalorie;
+  public void setmCalories(int mCalories) {
+    this.mCalories = mCalories;
   }
 
   public double getmClimb() {

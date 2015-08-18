@@ -26,8 +26,6 @@ import java.util.Calendar;
 public class MyRunsDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
 
-  ExerciseEntry mExerciseEntry;
-
   public static MyRunsDialog newInstance(String value) {
     MyRunsDialog fragment = new MyRunsDialog();
     Bundle args = new Bundle();
