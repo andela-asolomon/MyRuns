@@ -42,8 +42,8 @@ public class EntryDetails extends AppCompatActivity {
 
     mActivityTypeEdit.setText(details.getmActivityType());
     mDateTimeEdit.setText(dateFormat(details.getmDateTime().getTime()));
-    mDurationEdit.setText(String.valueOf(details.getmDuration()));
-    mDistanceEdit.setText(String.valueOf(details.getmDistance()));
+    mDurationEdit.setText(String.valueOf(details.getmDuration()) + " secs");
+    mDistanceEdit.setText(String.valueOf(details.getmDistance()) + " Miles");
   }
 
   private String dateFormat(Long dateTime) {
