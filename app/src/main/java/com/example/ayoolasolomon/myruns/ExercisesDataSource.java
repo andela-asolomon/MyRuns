@@ -59,36 +59,17 @@ public class ExercisesDataSource {
     values.put(MySQLiteHelper.COLUMN_CALORIES, entry.getmCalories());
 
     long id = database.insert(MySQLiteHelper.TABLE_EXERCISES, null, values);
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_EXERCISES, allColumns, MySQLiteHelper.COLUMN_ID
-        + " + " + id, null, null, null, null);
-    cursor.moveToFirst();
     database.close();
-    Log.d("id", "Id: " + id);
-  }
-
-  public ExerciseEntry fetchEntryByIndex(long id) {
-
-    String[] ID = { String.valueOf(id)};
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_EXERCISES, allColumns, MySQLiteHelper.COLUMN_ID
-        + "=?", ID, null, null, null, null);
-
-    if (cursor != null) {
-      cursor.moveToFirst();
-    }
-
-    ExerciseEntry entry = new ExerciseEntry();
-
-    return entry;
   }
 
   public ExerciseEntry fetchEntry(Cursor c) {
     long id = c.getLong(c.getColumnIndexOrThrow("_id"));
 
     String query = "SELECT * FROM ENTRIES WHERE _id = " + id;
-    Log.d("CURSORID", "Id: " + id);
+
     Cursor cursor = database.rawQuery(query, null);
     cursor.moveToFirst();
-    Log.d("BYC", "cur" + cursor);
+
     ExerciseEntry entry = cursorDetails(cursor);
     cursor.close();
     return entry;
@@ -96,11 +77,8 @@ public class ExercisesDataSource {
 
 
   public Cursor fetchEntries() {
-    List<ExerciseEntry> entriesList = new ArrayList<ExerciseEntry>();
-
     String selectQuery = "SELECT * FROM " + MySQLiteHelper.TABLE_EXERCISES;
     Cursor cursor = database.rawQuery(selectQuery, null);
-    Log.d("Count", "length " + cursor.getCount());
     return cursor;
   }
 
@@ -116,5 +94,9 @@ public class ExercisesDataSource {
 
   public Date setDateTime(long timeInMS) {
     return new Date(timeInMS);
+  }
+
+  public void removeEntry(Long id) {
+    database.delete(MySQLiteHelper.TABLE_EXERCISES, MySQLiteHelper.COLUMN_ID + " = " + id, null);
   }
 }

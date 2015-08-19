@@ -6,17 +6,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.sql.SQLException;
 
 public class EntryDetails extends AppCompatActivity {
 
   private EditText mActivityTypeEdit, mDateTimeEdit, mDurationEdit, mDistanceEdit;
+  private ExerciseEntry mDetails;
+  private ExercisesDataSource dataSource;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_entry_details);
 
-    ExerciseEntry mDetails = (ExerciseEntry) getIntent().getSerializableExtra("DETAILS");
+    mDetails = (ExerciseEntry) getIntent().getSerializableExtra("DETAILS");
+    dataSource = new ExercisesDataSource(this);
+
+    try {
+      dataSource.open();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
     setUpUI(mDetails);
   }
 
@@ -47,7 +59,9 @@ public class EntryDetails extends AppCompatActivity {
     int id = item.getItemId();
 
     //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
+    if (id == R.id.delete) {
+      dataSource.removeEntry(mDetails.getId());
+      finish();
       return true;
     }
 
