@@ -1,6 +1,7 @@
 package com.example.ayoolasolomon.myruns;
 
 import android.app.ListActivity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,12 +21,15 @@ import java.util.List;
 public class HistoryFragment extends Fragment {
 
   private ExercisesDataSource dataSource;
+  private ExerciseEntry mEntry;
+  private HistoryCursorAdapter cursorAdapter;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
     dataSource = new ExercisesDataSource(getActivity());
+    mEntry = new ExerciseEntry();
     try {
       dataSource.open();
     } catch (SQLException e) {
@@ -37,7 +41,7 @@ public class HistoryFragment extends Fragment {
     ListView listView = (ListView) view.findViewById(R.id.entries_list);
 
     try {
-      final HistoryCursorAdapter cursorAdapter = new HistoryCursorAdapter(getActivity(), dataSource.fetchEntries(), 0);
+      cursorAdapter = new HistoryCursorAdapter(getActivity(), dataSource.fetchEntries(), 0);
       listView.setAdapter(cursorAdapter);
     } catch (Exception e) {
       e.printStackTrace();
@@ -47,11 +51,12 @@ public class HistoryFragment extends Fragment {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        String value = parent.getItemAtPosition(position).toString();
-        Toast.makeText(getActivity(), value, Toast.LENGTH_SHORT).show();
-
+        Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+        dataSource.fetchEntry(cursor);
+        Log.d("Details: ", "dt " + dataSource.fetchEntry(cursor).getmDateTime());
       }
     });
+
 
     return view;
   }

@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
 
@@ -79,9 +81,17 @@ public class ExercisesDataSource {
     return entry;
   }
 
-  public void removeEntry(ExerciseEntry entry) {
-    long id = mEntry.getId();
-    database.delete(MySQLiteHelper.TABLE_EXERCISES, MySQLiteHelper.COLUMN_ID + " + " + id, null);
+  public ExerciseEntry fetchEntry(Cursor c) {
+    long id = c.getLong(c.getColumnIndexOrThrow("_id"));
+
+    String query = "SELECT * FROM ENTRIES WHERE _id = " + id;
+    Log.d("CURSORID", "Id: " + id);
+    Cursor cursor = database.rawQuery(query, null);
+    cursor.moveToFirst();
+    Log.d("BYC", "cur" + cursor);
+    ExerciseEntry entry = cursorDetails(cursor);
+    cursor.close();
+    return entry;
   }
 
 
@@ -90,9 +100,21 @@ public class ExercisesDataSource {
 
     String selectQuery = "SELECT * FROM " + MySQLiteHelper.TABLE_EXERCISES;
     Cursor cursor = database.rawQuery(selectQuery, null);
-
+    Log.d("Count", "length " + cursor.getCount());
     return cursor;
   }
 
+  private ExerciseEntry cursorDetails(Cursor cursor) {
+    ExerciseEntry entry = new ExerciseEntry();
+    entry.setId(cursor.getLong(0));
+    entry.setmActivityType(cursor.getString(2));
+    entry.setmDateTime(setDateTime(cursor.getLong(cursor.getColumnIndexOrThrow("date_time"))));
+    entry.setmDuration(cursor.getInt(4));
+    entry.setmDistance(cursor.getDouble(5));
+    return entry;
+  }
 
+  public Date setDateTime(long timeInMS) {
+    return new Date(timeInMS);
+  }
 }
