@@ -57,11 +57,11 @@ public class ExercisesDataSource {
     values.put(MySQLiteHelper.COLUMN_CALORIES, entry.getmCalories());
 
     long id = database.insert(MySQLiteHelper.TABLE_EXERCISES, null, values);
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_EXERCISES, allColumns, MySQLiteHelper.COLUMN_ID
-        + " + " + id, null, null, null, null);
-    cursor.moveToFirst();
+//    Cursor cursor = database.query(MySQLiteHelper.TABLE_EXERCISES, allColumns, MySQLiteHelper.COLUMN_ID
+//        + " + " + id, null, null, null, null);
+//    cursor.moveToFirst();
     database.close();
-    Log.d("id", "Id: " + cursor);
+    Log.d("id", "Id: " + id);
   }
 
   public ExerciseEntry fetchEntryByIndex(long id) {

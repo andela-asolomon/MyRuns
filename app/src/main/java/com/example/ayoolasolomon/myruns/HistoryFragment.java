@@ -36,8 +36,12 @@ public class HistoryFragment extends Fragment {
 
     ListView listView = (ListView) view.findViewById(R.id.entries_list);
 
-    final HistoryCursorAdapter cursorAdapter = new HistoryCursorAdapter(getActivity(), dataSource.fetchEntries(), 0);
-    listView.setAdapter(cursorAdapter);
+    try {
+      final HistoryCursorAdapter cursorAdapter = new HistoryCursorAdapter(getActivity(), dataSource.fetchEntries(), 0);
+      listView.setAdapter(cursorAdapter);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override

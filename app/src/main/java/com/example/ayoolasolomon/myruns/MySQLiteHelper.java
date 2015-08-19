@@ -27,7 +27,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_COMMENT = "comment";
   public static final String COLUMN_GPS_DATA = "gps_data";
 
-  private static final String DATABASE_NAME = "exercise.db";
+  private static final String DATABASE_NAME = "exercises.db";
   private static final int DATABASE_VERSION = 3;
 
   private static final String DATABASE_CREATE = "CREATE TABLE " + TABLE_EXERCISES + " (" + COLUMN_ID
@@ -44,11 +44,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-   try {
-     db.execSQL(DATABASE_CREATE);
-   } catch (Exception e) {
-     e.printStackTrace();
-   }
+     db.execSQL(" CREATE TABLE IF NOT EXISTS ENTRIES (\n" +
+         "        _id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+         "        input_type INTEGER NOT NULL, \n" +
+         "        activity_type INTEGER NOT NULL, \n" +
+         "        date_time DATETIME NOT NULL, \n" +
+         "        duration INTEGER NOT NULL, \n" +
+         "        distance FLOAT, \n" +
+         "        avg_pace FLOAT, \n" +
+         "        avg_speed FLOAT,\n" +
+         "        calories INTEGER, \n" +
+         "        climb FLOAT, \n" +
+         "        heartrate INTEGER, \n" +
+         "        comment TEXT, \n" +
+         "        privacy INTEGER,\n" +
+         "        gps_data BLOB );");
   }
 
   @Override
