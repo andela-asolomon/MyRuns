@@ -1,6 +1,7 @@
 package com.example.ayoolasolomon.myruns;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,8 +53,11 @@ public class HistoryFragment extends Fragment {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-        dataSource.fetchEntry(cursor);
-        Log.d("Details: ", "dt " + dataSource.fetchEntry(cursor).getmDateTime());
+
+        Intent intent = new Intent(getActivity(), EntryDetails.class);
+        intent.putExtra("DETAILS", dataSource.fetchEntry(cursor));
+        startActivity(intent);
+
       }
     });
 

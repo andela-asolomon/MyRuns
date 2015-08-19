@@ -64,6 +64,8 @@
         <item>Heart Rate</item>
         <item>Comment</item>
     </string-array>
+    <string name="title_activity_entry_details">EntryDetails</string>
+    <string name="activity_type">Activity Type</string>
 </resources>
 
 

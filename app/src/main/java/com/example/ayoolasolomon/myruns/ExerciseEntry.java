@@ -2,6 +2,7 @@ package com.example.ayoolasolomon.myruns;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,7 +10,7 @@ import java.util.Calendar;
 /**
  * Created by ayoolasolomon on 8/17/15.
  */
-public class ExerciseEntry {
+public class ExerciseEntry implements Serializable {
 
   private Long id;
   private String  mInputType;        // Manual, GPS or automatic
