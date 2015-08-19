@@ -2,6 +2,9 @@ package com.example.ayoolasolomon.myruns;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,9 +15,10 @@ import java.util.Calendar;
 public class ExerciseEntry {
 
   private Long id;
-  private int mInputType;        // Manual, GPS or automatic
-  private int mActivityType;     // Running, cycling etc.
-  private Date mDateTime;    // When does this entry happen
+  private String  mInputType;        // Manual, GPS or automatic
+  private String mActivityType;     // Running, cycling etc.
+  private Date mDate;    // When does this entry happen
+  private Time mTime;
   private int mDuration;         // Exercise duration in seconds
   private double mDistance;      // Distance traveled. Either in meters or feet.
   private double mAvgPace;       // Average pace
@@ -33,28 +37,36 @@ public class ExerciseEntry {
     this.id = id;
   }
 
-  public int getmInputType() {
+  public String getmInputType() {
     return mInputType;
   }
 
-  public void setmInputType(int mInputType) {
+  public void setmInputType(String mInputType) {
     this.mInputType = mInputType;
   }
 
-  public int getmActivityType() {
+  public String getmActivityType() {
     return mActivityType;
   }
 
-  public void setmActivityType(int mActivityType) {
+  public void setmActivityType(String mActivityType) {
     this.mActivityType = mActivityType;
   }
 
-  public Date getmDateTime() {
-    return mDateTime;
+  public Date getmDate() {
+    return mDate;
   }
 
-  public void setmDateTime(Date mDateTime) {
-    this.mDateTime = mDateTime;
+  public void setmDate(Date mDate) {
+    this.mDate = mDate;
+  }
+
+  public Time getmTime() {
+    return mTime;
+  }
+
+  public void setmTime(Time mTime) {
+    this.mTime = mTime;
   }
 
   public int getmDuration() {
@@ -127,5 +139,11 @@ public class ExerciseEntry {
 
   public void setmLocationList(ArrayList<LatLng> mLocationList) {
     this.mLocationList = mLocationList;
+  }
+
+  @Override
+  public String toString() {
+    DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm");
+    return dateFormat.format(mDateTime);
   }
 }

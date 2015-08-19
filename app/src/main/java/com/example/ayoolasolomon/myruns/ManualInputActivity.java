@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +50,7 @@ public class ManualInputActivity extends AppCompatActivity {
     }
 
     String activityType = getIntent().getStringExtra("activity");
-
+    mEntry.setmActivityType(activityType);
     ListView listView = (ListView) findViewById(R.id.manual_entry);
 
     String[] manualEntry = getResources().getStringArray(R.array.manual_entry);
@@ -87,7 +88,7 @@ public class ManualInputActivity extends AppCompatActivity {
   }
 
   public void onDateSet(int year, int month, int day) {
-    GregorianCalendar calendar = new GregorianCalendar();
+    GregorianCalendar calendar = new GregorianCalendar(year, month, day);
 
     try {
       Log.d("Date: ", "Calendar: " + calendar.getTime());

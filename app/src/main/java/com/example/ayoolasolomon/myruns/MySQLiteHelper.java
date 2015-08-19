@@ -46,8 +46,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
      db.execSQL(" CREATE TABLE IF NOT EXISTS ENTRIES (\n" +
          "        _id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-         "        input_type INTEGER NOT NULL, \n" +
-         "        activity_type INTEGER NOT NULL, \n" +
+         "        input_type TEXT, \n" +
+         "        activity_type TEXT, \n" +
          "        date_time DATETIME NOT NULL, \n" +
          "        duration INTEGER NOT NULL, \n" +
          "        distance FLOAT, \n" +

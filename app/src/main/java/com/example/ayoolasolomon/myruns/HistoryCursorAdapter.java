@@ -9,6 +9,12 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 /**
  * Created by ayoolasolomon on 8/18/15.
  */
@@ -29,13 +35,15 @@ public class HistoryCursorAdapter extends CursorAdapter {
     TextView tvBody = (TextView)view.findViewById(R.id.tvBody);
     TextView tvPriority = (TextView)view.findViewById(R.id.tvPriority);
 
-    String comment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
+    String activity_type = cursor.getString(cursor.getColumnIndexOrThrow("activity_type"));
+    String  date_time = cursor.getString(cursor.getColumnIndexOrThrow("date_time"));
+
+
+    double distance = cursor.getDouble(cursor.getColumnIndexOrThrow("distance"));
     int duration = cursor.getInt(cursor.getColumnIndexOrThrow("duration"));
 
-    Log.d("TAG", "Aws" + comment + duration);
-
-    tvBody.setText(comment);
-    tvPriority.setText(String.valueOf(duration));
+    tvBody.setText(activity_type + ", " + date_time);
+    tvPriority.setText(String.valueOf(distance) + " Miles, " + String.valueOf(duration) + "mins 0secs");
 
   }
 }
