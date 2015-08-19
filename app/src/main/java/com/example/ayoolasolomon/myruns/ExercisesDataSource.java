@@ -52,7 +52,7 @@ public class ExercisesDataSource {
     values.put(MySQLiteHelper.COLUMN_DISTANCE, entry.getmDistance());
     values.put(MySQLiteHelper.COLUMN_DURATION, entry.getmDuration());
     values.put(MySQLiteHelper.COLUMN_COMMENT, entry.getmComment());
-    values.put(MySQLiteHelper.COLUMN_DATE_TIME, entry.getmDateTime().toString());
+    values.put(MySQLiteHelper.COLUMN_DATE_TIME, entry.getmDateTime().getTime());
     values.put(MySQLiteHelper.COLUMN_HEARTRATE, entry.getmHeartRate());
     values.put(MySQLiteHelper.COLUMN_CALORIES, entry.getmCalories());
 

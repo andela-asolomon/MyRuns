@@ -2,9 +2,6 @@ package com.example.ayoolasolomon.myruns;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,8 +14,7 @@ public class ExerciseEntry {
   private Long id;
   private String  mInputType;        // Manual, GPS or automatic
   private String mActivityType;     // Running, cycling etc.
-  private Date mDate;    // When does this entry happen
-  private Time mTime;
+  private Date mDateTime;    // When does this entry happen
   private int mDuration;         // Exercise duration in seconds
   private double mDistance;      // Distance traveled. Either in meters or feet.
   private double mAvgPace;       // Average pace
@@ -53,20 +49,12 @@ public class ExerciseEntry {
     this.mActivityType = mActivityType;
   }
 
-  public Date getmDate() {
-    return mDate;
+  public Date getmDateTime() {
+    return mDateTime;
   }
 
-  public void setmDate(Date mDate) {
-    this.mDate = mDate;
-  }
-
-  public Time getmTime() {
-    return mTime;
-  }
-
-  public void setmTime(Time mTime) {
-    this.mTime = mTime;
+  public void setmDateTime(Date mDateTime) {
+    this.mDateTime = mDateTime;
   }
 
   public int getmDuration() {
@@ -139,11 +127,5 @@ public class ExerciseEntry {
 
   public void setmLocationList(ArrayList<LatLng> mLocationList) {
     this.mLocationList = mLocationList;
-  }
-
-  @Override
-  public String toString() {
-    DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm");
-    return dateFormat.format(mDateTime);
   }
 }

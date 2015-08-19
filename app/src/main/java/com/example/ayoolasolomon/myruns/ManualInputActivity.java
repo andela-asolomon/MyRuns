@@ -88,18 +88,21 @@ public class ManualInputActivity extends AppCompatActivity {
   }
 
   public void onDateSet(int year, int month, int day) {
-    GregorianCalendar calendar = new GregorianCalendar(year, month, day);
-
-    try {
-      Log.d("Date: ", "Calendar: " + calendar.getTime());
+      GregorianCalendar calendar = new GregorianCalendar(year, month, day);
       mEntry.setmDateTime(calendar.getTime());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   public void onTimeSet(int hour, int minute) {
-    String time = Integer.toString(hour) + ":" + Integer.toString(minute);
+
+      GregorianCalendar cal = new GregorianCalendar();
+      cal.setTime(mEntry.getmDateTime());
+
+      int year = cal.get(Calendar.YEAR);
+      int month = cal.get(Calendar.MONTH);
+      int day = cal.get(Calendar.DAY_OF_MONTH);
+
+      cal = new GregorianCalendar(year, month, day, hour, minute);
+      mEntry.setmDateTime(cal.getTime());
   }
 
   public void onDuration(String value) {
