@@ -9,6 +9,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class EntryDetails extends AppCompatActivity {
 
@@ -39,9 +41,14 @@ public class EntryDetails extends AppCompatActivity {
     mDurationEdit = (EditText) findViewById(R.id.duration);
 
     mActivityTypeEdit.setText(details.getmActivityType());
-    mDateTimeEdit.setText(String.valueOf(details.getmDateTime()));
+    mDateTimeEdit.setText(dateFormat(details.getmDateTime().getTime()));
     mDurationEdit.setText(String.valueOf(details.getmDuration()));
     mDistanceEdit.setText(String.valueOf(details.getmDistance()));
+  }
+
+  private String dateFormat(Long dateTime) {
+    DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm");
+    return dateFormat.format(dateTime);
   }
 
   @Override

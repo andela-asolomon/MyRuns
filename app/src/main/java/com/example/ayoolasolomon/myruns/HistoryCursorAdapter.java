@@ -43,18 +43,17 @@ public class HistoryCursorAdapter extends CursorAdapter {
     setDateTime(cursor.getLong(cursor.getColumnIndexOrThrow("date_time")));
 
     DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm");
-    String string = dateFormat.format(mEntry.getmDateTime().getTime());
+    String date_time = dateFormat.format(mEntry.getmDateTime().getTime());
 
     double distance = cursor.getDouble(cursor.getColumnIndexOrThrow("distance"));
     int duration = cursor.getInt(cursor.getColumnIndexOrThrow("duration"));
 
-    tvBody.setText(activity_type + ", " + string);
+    tvBody.setText(activity_type + ", " + date_time);
     tvPriority.setText(String.valueOf(distance) + " Miles, " + String.valueOf(duration) + "mins 0secs");
 
   }
 
   public void setDateTime(long timeInMS) {
-    Log.d("LONG: ", "here: " + timeInMS);
     mEntry.setmDateTime(new Date(timeInMS));
   }
 }

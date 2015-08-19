@@ -57,7 +57,6 @@ public class HistoryFragment extends Fragment {
         Intent intent = new Intent(getActivity(), EntryDetails.class);
         intent.putExtra("DETAILS", dataSource.fetchEntry(cursor));
         startActivity(intent);
-
       }
     });
 
