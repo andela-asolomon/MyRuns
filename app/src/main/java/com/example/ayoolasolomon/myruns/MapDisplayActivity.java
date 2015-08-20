@@ -18,14 +18,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapDisplayActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
   private GoogleMap mMap;
   private GoogleApiClient mGoogleApiClient;
   private LocationRequest mLocationRequest;
+  private Marker marker;
 
   public static final String TAG = "Map";
 
@@ -62,8 +64,8 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
           .getMap();
       // Check if we were successful in obtaining the map.
       if (mMap != null) {
-//        mMap.setOnMapClickListener(this);
-//        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
       }
     }
   }
@@ -102,10 +104,9 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     double currentLongitude = location.getLongitude();
     LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
-    MarkerOptions options = new MarkerOptions()
+    marker = mMap.addMarker(new MarkerOptions()
         .position(latLng)
-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-    mMap.addMarker(options);
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
   }
 
@@ -136,5 +137,18 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
 
   public void cancelMap(View view) {
     finish();
+  }
+
+  @Override
+  public void onMapClick(LatLng latLng) {
+    marker = mMap.addMarker(new MarkerOptions()
+        .position(latLng)
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+  }
+
+  @Override
+  public void onMapLongClick(LatLng latLng) {
+    mMap.clear();
   }
 }
