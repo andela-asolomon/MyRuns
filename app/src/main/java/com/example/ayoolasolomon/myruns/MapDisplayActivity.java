@@ -1,12 +1,14 @@
 package com.example.ayoolasolomon.myruns;
 
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -20,7 +22,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 public class MapDisplayActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
@@ -28,7 +34,14 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   private GoogleMap mMap;
   private GoogleApiClient mGoogleApiClient;
   private LocationRequest mLocationRequest;
-  private Marker marker;
+  private Marker start, end;
+
+  Polyline polyline;
+  PolylineOptions rectOptions;
+  boolean markerClicked;
+
+  private ArrayList<LatLng> mLatLngList;
+  private ArrayList<Polyline> mPolylineList;
 
   public static final String TAG = "Map";
 
@@ -55,6 +68,9 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     String activityType = getIntent().getStringExtra("activity");
     TextView activity = (TextView) findViewById(R.id.type_stats);
     activity.setText(activityType);
+
+    mLatLngList = new ArrayList<>(100000);
+    mPolylineList = new ArrayList<>(10000);
   }
 
   private void setUpMapIfNeeded() {
@@ -65,6 +81,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
           .getMap();
       // Check if we were successful in obtaining the map.
       if (mMap != null) {
+        markerClicked = false;
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
       }
@@ -99,13 +116,16 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   }
 
   private void handleNewLocation(Location location) {
+
+    markerClicked = false;
     Log.d(TAG, location.toString());
 
     double currentLatitude = location.getLatitude();
     double currentLongitude = location.getLongitude();
     LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+    mLatLngList.add(latLng);
 
-    marker = mMap.addMarker(new MarkerOptions()
+    start = mMap.addMarker(new MarkerOptions()
         .position(latLng)
         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
@@ -142,14 +162,30 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
 
   @Override
   public void onMapClick(LatLng latLng) {
-    marker = mMap.addMarker(new MarkerOptions()
-        .position(latLng)
-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+    if (end != null)
+      end.remove();
+
+    mLatLngList.add(latLng);
+
+    end = mMap.addMarker(new MarkerOptions()
+        .position((LatLng) mLatLngList.get(mLatLngList.size() - 1)));
     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+
+    if (polyline != null) {
+      polyline.remove();
+      polyline = null;
+    }
+
+    rectOptions = new PolylineOptions();
+    rectOptions.addAll(mLatLngList);
+    rectOptions.color(Color.GREEN);
+    polyline = mMap.addPolyline(rectOptions);
+
   }
 
   @Override
   public void onMapLongClick(LatLng latLng) {
-    mMap.clear();
+//    mMap.clear();
   }
 }
