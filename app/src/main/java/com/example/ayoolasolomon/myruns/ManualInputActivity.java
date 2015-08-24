@@ -51,6 +51,7 @@ public class ManualInputActivity extends AppCompatActivity {
 
     String activityType = getIntent().getStringExtra("activity");
     mEntry.setmActivityType(activityType);
+    mEntry.setmInputType("Manual");
     ListView listView = (ListView) findViewById(R.id.manual_entry);
 
     String[] manualEntry = getResources().getStringArray(R.array.manual_entry);

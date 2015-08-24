@@ -44,11 +44,11 @@ public class ExercisesDataSource {
   public void close() {
     database.close();
   }
-
   public void insertEntry(ExerciseEntry entry) {
 
     ContentValues values = new ContentValues();
     values.put(MySQLiteHelper.COLUMN_ACTIVITY_TYPE, entry.getmActivityType());
+    values.put(MySQLiteHelper.COLUMN_INPUT_TYPE, entry.getmInputType());
     values.put(MySQLiteHelper.COLUMN_INPUT_TYPE, entry.getmInputType());
     values.put(MySQLiteHelper.COLUMN_DURATION, entry.getmDuration());
     values.put(MySQLiteHelper.COLUMN_DISTANCE, entry.getmDistance());
