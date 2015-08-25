@@ -1,5 +1,6 @@
 package com.example.ayoolasolomon.myruns;
 
+import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
@@ -26,22 +27,24 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MapDisplayActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+    GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
   private GoogleMap mMap;
   private GoogleApiClient mGoogleApiClient;
   private LocationRequest mLocationRequest;
-  private Marker start, end;
+  private Marker start;
+  private Marker end;
+  protected Boolean mRequestingLocationUpdates;
 
   Polyline polyline;
   PolylineOptions rectOptions;
-  boolean markerClicked;
 
   private ArrayList<LatLng> mLatLngList;
-  private ArrayList<Polyline> mPolylineList;
 
   public static final String TAG = "Map";
 
@@ -54,23 +57,26 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
 
     setUpMapIfNeeded();
 
+    startService();
+
+    mRequestingLocationUpdates = false;
+
     mGoogleApiClient = new GoogleApiClient.Builder(this)
         .addConnectionCallbacks(this)
         .addOnConnectionFailedListener(this)
         .addApi(LocationServices.API)
         .build();
 
-    mLocationRequest = LocationRequest.create()
-        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        .setInterval(10 * 1000)
-        .setFastestInterval(1 * 1000);
+    mLocationRequest = new LocationRequest();
+    mLocationRequest.setInterval(10000)
+        .setFastestInterval(5000)
+        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
     String activityType = getIntent().getStringExtra("activity");
     TextView activity = (TextView) findViewById(R.id.type_stats);
     activity.setText(activityType);
 
     mLatLngList = new ArrayList<>(100000);
-    mPolylineList = new ArrayList<>(10000);
   }
 
   private void setUpMapIfNeeded() {
@@ -81,11 +87,14 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
           .getMap();
       // Check if we were successful in obtaining the map.
       if (mMap != null) {
-        markerClicked = false;
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
       }
     }
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    mGoogleApiClient.connect();
   }
 
   @Override
@@ -108,17 +117,22 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     Log.i(TAG, "Location services connected.");
 
     Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    if (location == null) {
-      LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-    } else {
+    if (location != null) {
       handleNewLocation(location);
     }
+
+    if (mRequestingLocationUpdates) {
+      startLocationUpdates();
+    }
+  }
+
+  private void startLocationUpdates() {
+    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
   }
 
   private void handleNewLocation(Location location) {
 
-    markerClicked = false;
-    Log.d(TAG, location.toString());
+    mRequestingLocationUpdates = true;
 
     double currentLatitude = location.getLatitude();
     double currentLongitude = location.getLongitude();
@@ -126,42 +140,26 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     mLatLngList.add(latLng);
 
     start = mMap.addMarker(new MarkerOptions()
-        .position(latLng)
-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        .position(latLng));
     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
   }
 
   @Override
   public void onConnectionSuspended(int i) {
     Log.i(TAG, "Location services suspended. Please reconnect.");
+    mGoogleApiClient.connect();
   }
 
   @Override
   public void onLocationChanged(Location location) {
-    handleNewLocation(location);
+    startRecording(location);
   }
 
-  @Override
-  public void onConnectionFailed(ConnectionResult connectionResult) {
-    if (connectionResult.hasResolution()) {
-      try {
-        connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-      } catch (IntentSender.SendIntentException e) {
-        e.printStackTrace();
-      }
-    }
-  }
+  private void startRecording(Location location) {
 
-  public void saveBtn(View view) {
-    finish();
-  }
+    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-  public void cancelMap(View view) {
-    finish();
-  }
-
-  @Override
-  public void onMapClick(LatLng latLng) {
+    Log.d(TAG, "Latlng: " + latLng);
 
     if (end != null)
       end.remove();
@@ -181,11 +179,46 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     rectOptions.addAll(mLatLngList);
     rectOptions.color(Color.GREEN);
     polyline = mMap.addPolyline(rectOptions);
+  }
 
+
+  @Override
+  public void onConnectionFailed(ConnectionResult connectionResult) {
+    if (connectionResult.hasResolution()) {
+      try {
+        connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+      } catch (IntentSender.SendIntentException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void stopNotification() {
+    Intent intent = new Intent();
+    intent.setAction(NotifyService.ACTION);
+    intent.putExtra(NotifyService.STOP_SERVICE_BROADCAST_KEY, NotifyService.RQS_STOP_SERVICE);
+    sendBroadcast(intent);
+  }
+
+  public void saveBtn(View view) {
+    finish();
+    stopNotification();
+  }
+
+  public void cancelMap(View view) {
+    finish();
+    stopNotification();
+  }
+
+  public void startService() {
+    Intent intent = new Intent(this, NotifyService.class);
+    startService(intent);
   }
 
   @Override
-  public void onMapLongClick(LatLng latLng) {
-//    mMap.clear();
+  protected void onDestroy() {
+    super.onDestroy();
+
+    stopNotification();
   }
 }
