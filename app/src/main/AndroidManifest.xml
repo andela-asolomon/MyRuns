@@ -74,7 +74,7 @@
         </activity>
 
         <service
-            android:name=".NotifyService"
+            android:name=".TrackingService"
             android:enabled="true"
             android:exported="true" >
         </service>

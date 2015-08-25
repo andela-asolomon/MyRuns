@@ -13,7 +13,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.IBinder;
 
-public class NotifyService extends Service {
+public class TrackingService extends Service {
 
   final static String ACTION = "NotifyServiceAction";
   final static String STOP_SERVICE_BROADCAST_KEY="StopServiceBroadcastKey";
@@ -27,7 +27,7 @@ public class NotifyService extends Service {
     super.onCreate();
   }
 
-  public NotifyService() {
+  public TrackingService() {
   }
 
   @Override
@@ -71,7 +71,6 @@ public class NotifyService extends Service {
   }
 
   public class NotifyServiceReceiver extends BroadcastReceiver {
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
