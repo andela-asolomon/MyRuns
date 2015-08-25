@@ -74,7 +74,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
 
     String activityType = getIntent().getStringExtra("activity");
     TextView activity = (TextView) findViewById(R.id.type_stats);
-    activity.setText(activityType);
+    activity.append(activityType);
 
     mLatLngList = new ArrayList<>(100000);
   }

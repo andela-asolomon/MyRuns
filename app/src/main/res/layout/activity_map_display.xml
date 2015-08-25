@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                tools:context="com.example.ayoolasolomon.myruns.MapDisplayActivity">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent"
+             tools:context="com.example.ayoolasolomon.myruns.MapDisplayActivity">
 
     <fragment
         android:id="@+id/map"
@@ -18,8 +18,49 @@
 
         <TextView
             android:id="@+id/type_stats"
-            android:text="Dude"
-            android:padding="10dp"
+            android:text="Type: "
+            android:textColor="#000"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/avg_speed"
+            android:text="Avg Speed: "
+            android:textColor="#000"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/cur_speed"
+            android:text="Cur Speed: "
+            android:textColor="#000"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/climb"
+            android:text="Climb: "
+            android:textColor="#000"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/calorie"
+            android:text="Calorie: "
+            android:textColor="#000"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/distance_map"
+            android:text="Distance: "
+            android:textColor="#000"
+            android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
