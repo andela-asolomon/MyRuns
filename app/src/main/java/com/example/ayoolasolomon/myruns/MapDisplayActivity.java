@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,8 +24,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.SphericalUtil;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 public class MapDisplayActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -128,14 +132,12 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   private void handleNewLocation(Location location) {
 
     mRequestingLocationUpdates = true;
-
     double currentLatitude = location.getLatitude();
     double currentLongitude = location.getLongitude();
     LatLng latLng = new LatLng(currentLatitude, currentLongitude);
     mLatLngList.add(latLng);
 
-    start = mMap.addMarker(new MarkerOptions()
-        .position(latLng));
+    start = mMap.addMarker(new MarkerOptions().position(latLng));
     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
   }
 
@@ -174,8 +176,10 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     rectOptions.addAll(mLatLngList);
     rectOptions.color(Color.GREEN);
     polyline = mMap.addPolyline(rectOptions);
-  }
 
+    conversion(location);
+
+  }
 
   @Override
   public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -213,7 +217,27 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   @Override
   protected void onDestroy() {
     super.onDestroy();
-
     stopNotification();
+  }
+
+  protected void conversion(Location location) {
+
+    Toast.makeText(this, "" + location.getSpeed(), Toast.LENGTH_SHORT).show();
+    TextView textViewDistance = (TextView) findViewById(R.id.distance_map);
+    TextView avgSpeed = (TextView) findViewById(R.id.avg_speed);
+
+    double distanceInKM = Math.abs(SphericalUtil.computeLength(mLatLngList)) / 1000;
+    double distanceToMetre = distanceInKM * 1000;
+
+    GregorianCalendar calendar = new GregorianCalendar();
+
+    double avg_speed = distanceToMetre / ( calendar.getTimeInMillis() / 1000L );
+
+    NumberFormat format = NumberFormat.getInstance();
+    format.setMaximumFractionDigits(2);
+    format.setMinimumFractionDigits(2);
+
+    textViewDistance.setText("Distance: " + format.format(distanceInKM));
+    avgSpeed.setText("Avg Speed: " + location.getSpeed());
   }
 }
