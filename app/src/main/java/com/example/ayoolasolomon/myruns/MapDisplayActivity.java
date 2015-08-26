@@ -26,9 +26,13 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class MapDisplayActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -44,10 +48,14 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   PolylineOptions rectOptions;
 
   private ArrayList<LatLng> mLatLngList;
+  private ArrayList<Location> mLocationList;
 
   public static final String TAG = "Map";
-
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+  private final static double MILLISECONDS_TO_HOUR = 2.7778e-7;
+  private final static double KILO = 1000;
+  private final static double SECONDS_IN_HOUR = 3600;
+  private final static double KM_TO_MILE = 1.609344;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +84,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     activity.append(activityType);
 
     mLatLngList = new ArrayList<>(100000);
+    mLocationList = new ArrayList<>(100000);
   }
 
   private void setUpMapIfNeeded() {
@@ -136,6 +145,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     double currentLongitude = location.getLongitude();
     LatLng latLng = new LatLng(currentLatitude, currentLongitude);
     mLatLngList.add(latLng);
+    mLocationList.add(location);
 
     start = mMap.addMarker(new MarkerOptions().position(latLng));
     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
@@ -154,6 +164,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
 
   private void startRecording(Location location) {
 
+    mLocationList.add(location);
     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
     Log.d(TAG, "Latlng: " + latLng);
@@ -177,7 +188,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     rectOptions.color(Color.GREEN);
     polyline = mMap.addPolyline(rectOptions);
 
-    conversion(location);
+    conversion();
 
   }
 
@@ -220,24 +231,38 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     stopNotification();
   }
 
-  protected void conversion(Location location) {
+  protected void conversion() {
 
-    Toast.makeText(this, "" + location.getSpeed(), Toast.LENGTH_SHORT).show();
+    DecimalFormat format = new DecimalFormat("#.##");
+
     TextView textViewDistance = (TextView) findViewById(R.id.distance_map);
     TextView avgSpeed = (TextView) findViewById(R.id.avg_speed);
+    TextView curSpeed = (TextView) findViewById(R.id.cur_speed);
+    TextView calorie = (TextView) findViewById(R.id.calorie);
+    TextView climb = (TextView) findViewById(R.id.climb);
 
-    double distanceInKM = Math.abs(SphericalUtil.computeLength(mLatLngList)) / 1000;
-    double distanceToMetre = distanceInKM * 1000;
+    long startTime =  mLocationList.get(0).getTime();
+    long endTIme = mLocationList.get(mLocationList.size() - 1).getTime();
+    double durationInHour = (double)Math.abs(endTIme - startTime) * MILLISECONDS_TO_HOUR;
 
-    GregorianCalendar calendar = new GregorianCalendar();
+    double distanceInKM = SphericalUtil.computeLength(mLatLngList) / KILO;
 
-    double avg_speed = distanceToMetre / ( calendar.getTimeInMillis() / 1000L );
+    double avg_speed;
+    if (durationInHour > 0) {
+      avg_speed = distanceInKM / durationInHour;
+    } else {
+      avg_speed = .0;
+    }
 
-    NumberFormat format = NumberFormat.getInstance();
-    format.setMaximumFractionDigits(2);
-    format.setMinimumFractionDigits(2);
+    double cur_speed = mLocationList.get(mLocationList.size() - 1).hasSpeed() ? mLocationList.get(mLocationList.size() - 1).getSpeed() : .0;
+    double rv = cur_speed / KILO * SECONDS_IN_HOUR / KM_TO_MILE;
 
-    textViewDistance.setText("Distance: " + format.format(distanceInKM));
-    avgSpeed.setText("Avg Speed: " + location.getSpeed());
+    int calOnMap = (int)distanceInKM / 15;
+
+    textViewDistance.setText("Distance: " + format.format(distanceInKM) + " Kilometers");
+    avgSpeed.setText("Avg Speed: " + format.format(avg_speed) + " km/h");
+    curSpeed.setText("Cur Speed: " + rv);
+    calorie.setText("Calorie: " + calOnMap);
+//    climb.setText("Climb: " + );
   }
 }
