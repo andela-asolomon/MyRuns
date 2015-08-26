@@ -257,12 +257,16 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     double cur_speed = mLocationList.get(mLocationList.size() - 1).hasSpeed() ? mLocationList.get(mLocationList.size() - 1).getSpeed() : .0;
     double rv = cur_speed / KILO * SECONDS_IN_HOUR / KM_TO_MILE;
 
-    int calOnMap = (int)distanceInKM / 15;
+    double calOnMap = (distanceInKM / 15) * KILO;
+
+    double prev = mLocationList.get(0).getAltitude();
+    double curr = mLocationList.get(mLocationList.size() - 1).getAltitude();
+    double clm = Math.abs(curr - prev) / KILO;
 
     textViewDistance.setText("Distance: " + format.format(distanceInKM) + " Kilometers");
     avgSpeed.setText("Avg Speed: " + format.format(avg_speed) + " km/h");
-    curSpeed.setText("Cur Speed: " + rv);
-    calorie.setText("Calorie: " + calOnMap);
-//    climb.setText("Climb: " + );
+    curSpeed.setText("Cur Speed: " + format.format(rv));
+    calorie.setText("Calorie: " + format.format(calOnMap));
+    climb.setText("Climb: " + format.format(clm));
   }
 }
