@@ -47,7 +47,7 @@ public class EntryDetails extends AppCompatActivity {
   }
 
   private String dateFormat(Long dateTime) {
-    DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm");
+    DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm:ss");
     return dateFormat.format(dateTime);
   }
 
@@ -68,6 +68,7 @@ public class EntryDetails extends AppCompatActivity {
     //noinspection SimplifiableIfStatement
     if (id == R.id.delete) {
       dataSource.removeEntry(mDetails.getId());
+      Toast.makeText(this, "Entry #" + mDetails.getId() + " deleted", Toast.LENGTH_SHORT).show();
       finish();
       return true;
     }

@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.sql.SQLException;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -44,6 +45,9 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   private Marker end;
   protected Boolean mRequestingLocationUpdates;
 
+  private ExerciseEntry mEntry;
+  private ExercisesDataSource dataSource;
+
   Polyline polyline;
   PolylineOptions rectOptions;
 
@@ -55,6 +59,7 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   private final static double MILLISECONDS_TO_HOUR = 2.7778e-7;
   private final static double KILO = 1000;
   private final static double SECONDS_IN_HOUR = 3600;
+  private final static double SECONDS = 60;
   private final static double KM_TO_MILE = 1.609344;
 
   @Override
@@ -79,12 +84,23 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
         .setFastestInterval(5000)
         .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+    mLatLngList = new ArrayList<>(100000);
+    mLocationList = new ArrayList<>(100000);
+
+    dataSource = new ExercisesDataSource(this);
+    mEntry = new ExerciseEntry();
+    try {
+      dataSource.open();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     String activityType = getIntent().getStringExtra("activity");
+    mEntry.setmActivityType(activityType);
+    mEntry.setmInputType("GPS");
     TextView activity = (TextView) findViewById(R.id.type_stats);
     activity.append(activityType);
 
-    mLatLngList = new ArrayList<>(100000);
-    mLocationList = new ArrayList<>(100000);
   }
 
   private void setUpMapIfNeeded() {
@@ -210,16 +226,6 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     sendBroadcast(intent);
   }
 
-  public void saveBtn(View view) {
-    finish();
-    stopNotification();
-  }
-
-  public void cancelMap(View view) {
-    finish();
-    stopNotification();
-  }
-
   public void startService() {
     Intent intent = new Intent(this, TrackingService.class);
     startService(intent);
@@ -233,6 +239,8 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
 
   protected void conversion() {
 
+    GregorianCalendar calendar = new GregorianCalendar();
+    mEntry.setmDateTime(calendar.getTime());
     DecimalFormat format = new DecimalFormat("#.##");
 
     TextView textViewDistance = (TextView) findViewById(R.id.distance_map);
@@ -244,29 +252,50 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     long startTime =  mLocationList.get(0).getTime();
     long endTIme = mLocationList.get(mLocationList.size() - 1).getTime();
     double durationInHour = (double)Math.abs(endTIme - startTime) * MILLISECONDS_TO_HOUR;
+    double durationInMinutes = durationInHour * SECONDS;
+    mEntry.setmDuration((int) durationInMinutes);
 
     double distanceInKM = SphericalUtil.computeLength(mLatLngList) / KILO;
+    mEntry.setmDistance(Double.parseDouble(format.format(distanceInKM)));
 
     double avg_speed;
     if (durationInHour > 0) {
       avg_speed = distanceInKM / durationInHour;
+      mEntry.setmAvgSpeed(avg_speed);
     } else {
       avg_speed = .0;
+      mEntry.setmAvgSpeed(avg_speed);
     }
 
     double cur_speed = mLocationList.get(mLocationList.size() - 1).hasSpeed() ? mLocationList.get(mLocationList.size() - 1).getSpeed() : .0;
     double rv = cur_speed / KILO * SECONDS_IN_HOUR / KM_TO_MILE;
+    mEntry.setmAvgPace(rv);
 
     double calOnMap = (distanceInKM / 15) * KILO;
+    mEntry.setmCalories((int)calOnMap);
 
     double prev = mLocationList.get(0).getAltitude();
     double curr = mLocationList.get(mLocationList.size() - 1).getAltitude();
     double clm = Math.abs(curr - prev) / KILO;
+    mEntry.setmClimb(clm);
 
     textViewDistance.setText("Distance: " + format.format(distanceInKM) + " Kilometers");
     avgSpeed.setText("Avg Speed: " + format.format(avg_speed) + " km/h");
     curSpeed.setText("Cur Speed: " + format.format(rv));
     calorie.setText("Calorie: " + format.format(calOnMap));
     climb.setText("Climb: " + format.format(clm));
+  }
+
+  public void saveBtn(View view) {
+
+    dataSource.insertEntry(mEntry);
+    finish();
+    stopNotification();
+    Toast.makeText(this, "Entry Saved", Toast.LENGTH_SHORT ).show();
+  }
+
+  public void cancelMap(View view) {
+    finish();
+    stopNotification();
   }
 }
