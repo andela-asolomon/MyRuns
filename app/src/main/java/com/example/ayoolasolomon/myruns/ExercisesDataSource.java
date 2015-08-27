@@ -57,6 +57,7 @@ public class ExercisesDataSource {
     values.put(MySQLiteHelper.COLUMN_DATE_TIME, entry.getmDateTime().getTime());
     values.put(MySQLiteHelper.COLUMN_HEARTRATE, entry.getmHeartRate());
     values.put(MySQLiteHelper.COLUMN_CALORIES, entry.getmCalories());
+    values.put(MySQLiteHelper.COLUMN_GPS_DATA, entry.getmLocationList());
 
     long id = database.insert(MySQLiteHelper.TABLE_EXERCISES, null, values);
     database.close();

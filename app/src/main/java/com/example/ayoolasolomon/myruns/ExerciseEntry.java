@@ -24,7 +24,7 @@ public class ExerciseEntry implements Serializable {
   private double mClimb;         // Climb. Either in meters or feet.
   private int mHeartRate;        // Heart rate
   private String mComment;       // Comments
-  private ArrayList<LatLng> mLocationList; // Location list
+  private byte[] mLocationList; // Location list
 
   public Long getId() {
     return id;
@@ -122,11 +122,12 @@ public class ExerciseEntry implements Serializable {
     this.mComment = mComment;
   }
 
-  public ArrayList<LatLng> getmLocationList() {
+  public byte[] getmLocationList() {
     return mLocationList;
   }
 
-  public void setmLocationList(ArrayList<LatLng> mLocationList) {
+  public void setmLocationList(byte[] mLocationList) {
     this.mLocationList = mLocationList;
   }
+
 }

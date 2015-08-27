@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -284,6 +286,8 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
     curSpeed.setText("Cur Speed: " + format.format(rv));
     calorie.setText("Calorie: " + format.format(calOnMap));
     climb.setText("Climb: " + format.format(clm));
+
+    fromLocationArrayToByteArray(mLocationList);
   }
 
   public void saveBtn(View view) {
@@ -297,5 +301,22 @@ public class MapDisplayActivity extends AppCompatActivity implements GoogleApiCl
   public void cancelMap(View view) {
     finish();
     stopNotification();
+  }
+
+  private void fromLocationArrayToByteArray(ArrayList<Location> locations) {
+
+    int[] intArray = new int[locations.size() * 2];
+
+    for (int i = 0; i < locations.size(); i++) {
+      intArray[i * 2] = (int) (locations.get(i).getLatitude() * 1E6);
+      intArray[(i * 2) + 1] = (int) (locations.get(i).getLongitude() * 1E6);
+    }
+
+    ByteBuffer byteBuffer = ByteBuffer.allocate(intArray.length * Integer.SIZE);
+    IntBuffer intBuffer = byteBuffer.asIntBuffer();
+    intBuffer.put(intArray);
+
+    mEntry.setmLocationList(byteBuffer.array());
+
   }
 }

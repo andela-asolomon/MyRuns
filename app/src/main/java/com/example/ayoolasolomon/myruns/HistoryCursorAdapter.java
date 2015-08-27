@@ -2,6 +2,7 @@ package com.example.ayoolasolomon.myruns;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.location.Location;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +43,8 @@ public class HistoryCursorAdapter extends CursorAdapter {
     TextView tvPriority = (TextView)view.findViewById(R.id.tvPriority);
 
     String activity_type = cursor.getString(cursor.getColumnIndexOrThrow("activity_type"));
+    String input_type = cursor.getString(cursor.getColumnIndexOrThrow("input_type"));
+
     setDateTime(cursor.getLong(cursor.getColumnIndexOrThrow("date_time")));
 
     DateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm");
@@ -51,9 +56,32 @@ public class HistoryCursorAdapter extends CursorAdapter {
     tvBody.setText(activity_type + ", " + date_time);
     tvPriority.setText(String.valueOf(distance) + " Miles, " + String.valueOf(duration) + "mins 0secs");
 
+    if (input_type.equals("Automatic") || input_type.equals("GPS")) {
+      fromByteArrayToLocationArray(cursor.getBlob(cursor.getColumnIndexOrThrow("gps_data")));
+    }
+
   }
 
   public void setDateTime(long timeInMS) {
     mEntry.setmDateTime(new Date(timeInMS));
+  }
+
+  private void fromByteArrayToLocationArray(byte[] bytes) {
+
+    ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+    IntBuffer intBuffer = byteBuffer.asIntBuffer();
+
+    int[] intArray = new int[bytes.length / Integer.SIZE];
+    intBuffer.get(intArray);
+
+    Location[] locations = new Location[intArray.length / 2];
+
+    assert (locations != null);
+
+    for (int i = 0; i < locations.length; i++) {
+      locations[i] = new Location("");
+      locations[i].setLatitude((double) intArray[i * 2] / 1E6F);
+      locations[i].setLongitude((double) intArray[i * 2 + 1] / 1E6F);
+    }
   }
 }
